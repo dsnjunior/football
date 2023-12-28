@@ -1,0 +1,112 @@
+---
+import { Menu, X } from "lucide-react";
+
+import LanguagePicker from "@/components/language-picker.astro";
+import { UserMenu } from "@/components/user-menu";
+import { buttonVariants } from "@/components/ui/button";
+
+const {
+  auth,
+  i18n: { t, translatePath },
+} = Astro.locals;
+
+const session = await auth.validate();
+
+const navigation = [{ title: t("nav.support"), path: translatePath("/app") }];
+
+const submenuNav = [{ title: t("nav.home"), path: translatePath("/app") }];
+---
+
+<header class="text-base md:text-sm relative z-10" transition:animate="none">
+  <div
+    id="nav-wrapper"
+    class="bg-card items-center gap-x-14 px-4 max-w-screen-xl mx-auto md:flex md:px-8 md:static"
+  >
+    <div class="flex items-center justify-between py-3 md:py-5 md:block">
+      <a href={translatePath("/app")}>
+        <h1 class="font-sans font-black text-xl flex">Football</h1>
+      </a>
+      <div class="md:hidden">
+        <button
+          class="text-card-foreground/80 hover:text-card-foreground [&>:first-child]:hidden"
+          id="nav-toggler"
+        >
+          <X className="h-6 w-6" />
+          <Menu className="h-6 w-6" />
+        </button>
+      </div>
+    </div>
+    <div
+      id="nav-menu"
+      class="nav-menu flex-1 pb-28 mt-8 overflow-y-auto max-h-screen md:block md:overflow-visible md:pb-0 md:mt-0 hidden"
+    >
+      <ul
+        class="items-center space-y-6 md:flex md:space-x-4 md:space-y-0 md:justify-end whitespace-nowrap"
+      >
+        {
+          navigation.map((item) => {
+            return (
+              <li>
+                <a href={item.path} class={buttonVariants({ variant: "link" })}>
+                  {item.title}
+                </a>
+              </li>
+            );
+          })
+        }
+        <div class="flex items-center">
+          <div class="pr-4"><LanguagePicker /></div>
+          {
+            session && (
+              <UserMenu
+                client:idle
+                avatarUrl={session.user.avatarUrl}
+                name={session.user.displayName || session.user.googleSub}
+              />
+            )
+          }
+        </div>
+      </ul>
+    </div>
+  </div>
+  <nav class="border-b" transition:name="nav" transition:animate="fade">
+    <ul
+      class="flex items-center gap-x-3 max-w-screen-xl mx-auto px-4 overflow-x-auto md:px-8 whitespace-nowrap"
+    >
+      {
+        submenuNav.map((item) => {
+          return (
+            <li
+              class={`py-1 ${
+                Astro.url.pathname === item.path
+                  ? "border-b-2 border-primary"
+                  : ""
+              }`}
+            >
+              <a href={item.path} class={buttonVariants({ variant: "ghost" })}>
+                {item.title}
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </nav>
+</header>
+
+<script>
+  function onClick() {
+    document.getElementById("nav-menu")?.classList.toggle("hidden");
+    document.getElementById("nav-wrapper")?.classList.toggle("h-full");
+    document.getElementById("nav-wrapper")?.classList.toggle("fixed");
+    document.getElementById("nav-wrapper")?.classList.toggle("inset-x-0");
+    document
+      .getElementById("nav-toggler")
+      ?.classList.toggle("[&>:first-child]:hidden");
+    document
+      .getElementById("nav-toggler")
+      ?.classList.toggle("[&>:last-child]:hidden");
+  }
+
+  document.getElementById("nav-toggler")?.addEventListener("click", onClick);
+</script>

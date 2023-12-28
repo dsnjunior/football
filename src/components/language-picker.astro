@@ -1,0 +1,31 @@
+---
+import { languages } from "@/lib/i18n/ui";
+import { buttonVariants } from "@/components/ui/button";
+
+const currentPath = Astro.url.pathname.replace(
+  `/${Astro.locals.i18n.lang}`,
+  ""
+);
+---
+
+<ul>
+  {
+    Object.entries(languages)
+      .filter(([lang]) => lang !== Astro.locals.i18n.lang)
+      .map(([lang, label]) => (
+        <li>
+          <a
+            href={Astro.locals.i18n.translatePath(currentPath, lang)}
+            class={buttonVariants({ size: "sm", variant: "outline" })}
+          >
+            <img
+              src={`/flags/${lang}.png`}
+              alt={label}
+              class="w-4 mr-2 inline-block object-contain"
+            />
+            <span>{label}</span>
+          </a>
+        </li>
+      ))
+  }
+</ul>

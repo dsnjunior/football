@@ -1,0 +1,41 @@
+---
+import { eq } from "drizzle-orm";
+
+import { db, schema } from "@/lib/db";
+
+import App from "@/layouts/app.astro";
+import Heading from "@/components/ui/heading.astro";
+
+const {
+  auth,
+  // @ts-ignore
+  i18n: { translatePath },
+} = Astro.locals;
+
+const session = await auth.validate();
+
+if (!session) {
+  return Astro.redirect(translatePath("/"));
+}
+
+const user = await db.query.user.findFirst({
+  where: eq(schema.user.id, session.user.userId),
+});
+
+if (!user) {
+  return Astro.redirect(translatePath("/"));
+}
+---
+
+<App title={user.display_name!}>
+  <div class="px-4 py-8 container max-w-2xl">
+    <div class="sm:flex items-center">
+      <Heading
+        title={user.display_name!}
+        description=""
+        class="mb-8 sm:mb-0 sm:pr-2 sm:mr-auto"
+      />
+    </div>
+    <div transition:name="content"></div>
+  </div>
+</App>

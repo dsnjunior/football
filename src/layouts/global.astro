@@ -1,0 +1,40 @@
+---
+import { ViewTransitions } from "astro:transitions";
+
+import "@/styles/globals.css";
+import Posthog from "@/components/posthog.astro";
+import { Toaster } from "@/components/ui/sonner";
+
+export interface Props {
+  title: string | undefined;
+}
+
+const { title } = Astro.props;
+---
+
+<html lang={Astro.locals.i18n.lang} transition:animate="none">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚽</text></svg>"
+    />
+    <meta name="generator" content={Astro.generator} />
+    <ViewTransitions />
+    <title>{title ? `${title} - Football` : "Football"}</title>
+    <Posthog />
+    <Toaster client:only />
+  </head>
+  <body>
+    <slot />
+    <script>
+      function setViewHeight() {
+        document.body.style.setProperty("--vh", `${window.innerHeight}px`);
+      }
+
+      document.addEventListener("astro:page-load", setViewHeight);
+      window.addEventListener("resize", setViewHeight);
+    </script>
+  </body>
+</html>

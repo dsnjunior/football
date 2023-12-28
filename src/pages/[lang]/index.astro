@@ -1,0 +1,25 @@
+---
+import Global from "@/layouts/global.astro";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+const { auth, i18n: { t, translatePath } } = Astro.locals;
+
+const session = await auth.validate();
+
+if (session) {
+  return Astro.redirect(translatePath("/app"));
+}
+---
+
+<Global title={t("pagetitle.home")}>
+  <div class="h-vh flex items-center justify-center">
+    <a
+      href={translatePath("/auth/google")}
+      class={cn(buttonVariants(), "mt-4")}
+      data-astro-prefetch="false"
+    >
+      {t("login.google")}
+    </a>
+  </div>
+</Global>
