@@ -1,6 +1,6 @@
 export const languages = {
   en: 'English',
-  'pt-BR': 'Português',
+  'pt-br': 'Português',
 };
 
 export type Lang = keyof typeof languages;
@@ -14,7 +14,7 @@ export const ui = {
     'nav.support': 'Support',
     'nav.home': 'Home',
   },
-  'pt-BR': {
+  'pt-br': {
     'pagetitle.home': 'Início',
     'login.google': 'Entrar com o Google',
     'nav.support': 'Suporte',

@@ -2,15 +2,12 @@
 import { Menu, X } from "lucide-react";
 
 import LanguagePicker from "@/components/language-picker.astro";
-import { UserMenu } from "@/components/user-menu";
+import UserMenu from "@/components/user-menu.astro";
 import { buttonVariants } from "@/components/ui/button";
 
 const {
-  auth,
   i18n: { t, translatePath },
 } = Astro.locals;
-
-const session = await auth.validate();
 
 const navigation = [{ title: t("nav.support"), path: translatePath("/app") }];
 
@@ -56,15 +53,7 @@ const submenuNav = [{ title: t("nav.home"), path: translatePath("/app") }];
         }
         <div class="flex items-center">
           <div class="pr-4"><LanguagePicker /></div>
-          {
-            session && (
-              <UserMenu
-                client:idle
-                avatarUrl={session.user.avatarUrl}
-                name={session.user.displayName || session.user.googleSub}
-              />
-            )
-          }
+          <UserMenu />
         </div>
       </ul>
     </div>

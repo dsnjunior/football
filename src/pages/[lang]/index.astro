@@ -3,7 +3,10 @@ import Global from "@/layouts/global.astro";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const { auth, i18n: { t, translatePath } } = Astro.locals;
+const {
+  auth,
+  i18n: { t, translatePath },
+} = Astro.locals;
 
 const session = await auth.validate();
 

@@ -5,6 +5,7 @@ import { db, schema } from "@/lib/db";
 
 import App from "@/layouts/app.astro";
 import Heading from "@/components/ui/heading.astro";
+import Modal from "@/components/modal.astro";
 
 const {
   auth,
@@ -38,4 +39,20 @@ if (!user) {
     </div>
     <div transition:name="content"></div>
   </div>
+  <Modal title="Title">
+    <div class="h-80"><button id="btn">see that</button></div>
+  </Modal>
 </App>
+
+<script>
+  document.getElementById("btn")?.addEventListener("click", () => {
+    document.dispatchEvent(
+      new CustomEvent("toast", {
+        detail: {
+          type: "success",
+          message: "Hello World",
+        },
+      })
+    );
+  });
+</script>

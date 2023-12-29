@@ -1,0 +1,117 @@
+---
+import { X } from "lucide-react";
+
+export type Props = {
+  title: string;
+  open?: boolean;
+  onClose?: () => void;
+};
+---
+
+<div id="modal">
+  <div class="fixed inset-0 bg-black/40 backdrop-blur z-10" id="modal-backdrop">
+  </div>
+
+  <div
+    class="fixed z-20 bottom-0 left-0 right-0 rounded-t p-8 bg-background md:top-0 md:flex md:bg-transparent md:items-center md:justify-center"
+    id="modal-content"
+  >
+    <div
+      id="modal-controller"
+      class="w-20 after:block after:h-1 after:bg-foreground/80 py-2 after:rounded mx-auto cursor-grab md:hidden"
+    >
+    </div>
+    <div
+      class="py-4 md:w-96 md:bg-background md:rounded md:shadow md:px-4 md:relative"
+    >
+      <slot />
+      <button
+        class="hidden md:block absolute top-4 right-4 text-current"
+        id="modal-close"
+      >
+        <X />
+        <span class="sr-only">Close</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.addEventListener("resize", () => {
+    setupModal(window.matchMedia("(min-width: 768px)").matches);
+  });
+  setupModal(window.matchMedia("(min-width: 768px)").matches);
+
+  function setupModal(isDesktop: boolean) {
+    const modal = document.getElementById("modal")!;
+
+    if (isDesktop) {
+      console.log("???");
+      const modalClose = document.getElementById("modal-close")!;
+      modalClose.addEventListener("click", () => {
+        modal.classList.add("hidden");
+      });
+
+      return;
+    }
+
+    const modalController = document.getElementById("modal-controller")!;
+    const modalContent = document.getElementById("modal-content")!;
+
+    let pos = 0,
+      mousePos = 0;
+
+    function dragMouseDown(e: MouseEvent) {
+      e.preventDefault();
+      mousePos = e.clientY;
+
+      document.addEventListener("mouseup", closeDragElement);
+      document.addEventListener("mousemove", elementDrag);
+    }
+
+    function elementDrag(e: MouseEvent) {
+      e.preventDefault();
+      pos = mousePos - e.clientY;
+      mousePos = e.clientY;
+      modalContent.style.top =
+        Math.max(modalContent.offsetTop - pos, 60) + "px";
+    }
+
+    function closeDragElement() {
+      if (modalContent.style.opacity !== "1") {
+        modal.classList.add("hidden");
+      }
+      document.removeEventListener("mouseup", closeDragElement);
+      document.removeEventListener("mousemove", elementDrag);
+    }
+
+    modalController.addEventListener("mousedown", dragMouseDown);
+
+    const modalBackdrop = document.getElementById("modal-backdrop")!;
+    modalBackdrop.addEventListener("click", () => {
+      modal.classList.add("hidden");
+    });
+
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === "attributes") {
+          const topModalPosition = Number(
+            modalContent.style.top.replace("px", "")
+          );
+          const screenLimit = window.innerHeight - 60;
+
+          if (topModalPosition > screenLimit - 100) {
+            const opacity = (screenLimit - topModalPosition) / 100;
+            modalContent.style.opacity = opacity.toString();
+          } else {
+            modalContent.style.opacity = "1";
+          }
+        }
+      });
+    });
+
+    observer.observe(modalContent, {
+      attributes: true,
+    });
+  }
+</script>

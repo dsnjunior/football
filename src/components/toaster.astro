@@ -1,0 +1,51 @@
+<div
+  id="toaster"
+  class="fixed bottom-3 right-3 w-80 z-40 pointer-events-none grid gap-1"
+>
+</div>
+
+<script>
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === "childList") {
+        const toaster = document.getElementById("toaster")!;
+        const children = toaster.children;
+        const hasChildren = children.length;
+        if (hasChildren) {
+          toaster.classList.remove("pointer-events-none");
+        } else {
+          toaster.classList.add("pointer-events-none");
+        }
+      }
+    });
+  });
+
+  observer.observe(document.getElementById("toaster")!, {
+    childList: true,
+  });
+
+  const toast = (message: string) => {
+    const toaster = document.getElementById("toaster")!;
+    const toast = document.createElement("div");
+    toast.classList.add(
+      "bg-background",
+      "rounded",
+      "shadow",
+      "p-3",
+      "border",
+      "border-border"
+    );
+    toast.innerText = message;
+    toaster.appendChild(toast);
+
+    setTimeout(() => {
+      toast.remove();
+    }, 2000);
+  };
+
+  document.addEventListener("toast", (e) => {
+    const event = e as CustomEvent<{ message: string }>;
+    const message = event.detail.message;
+    toast(message);
+  });
+</script>
